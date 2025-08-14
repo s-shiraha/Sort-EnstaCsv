@@ -6,7 +6,8 @@ function Sort-EnstaCsv2 {
         [parameter(mandatory = $true)][int]$StartRow
 
     )
-    $TargetFile = "${HOME}/pwsh/01_Sort-EnstaCsv/image_and_csv/niki2.csv"
+    $TargetFile = "${HOME}/pwsh/image_and_csv/niki2.csv"
+    "TargetFile`t${TargetFile}" | Out-Host
 
     $Content = Get-Content -Path $TargetFile -Encoding utf8
     $MaxRow = [int](($Content | Where-Object -FilterScript {$_ -match "^\d+"} | Select-Object -Last 1) -split ",")[0]
@@ -81,4 +82,4 @@ function Sort-EnstaCsv2 {
     
 }
 
-#Make-CsvRearrange2 -StartingPoint "-66,-66" -StartRow 93
+#Sort-EnstaCsv2 -StartingPoint "-66,-66" -StartRow 93
