@@ -1,4 +1,4 @@
-$TargetFile = "${HOME}/pwsh/01_Sort-EnstaCsv/image_and_csv/niki2.csv"
+$TargetFile = "${HOME}/pwsh/image_and_csv/niki2.csv"
 
 $Content = Get-Content -Path $TargetFile -Encoding utf8
 $MaxRow = [int](($Content | Where-Object -FilterScript {$_ -match "^\d+"} | Select-Object -Last 1) -split ",")[0]
