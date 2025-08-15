@@ -2,10 +2,11 @@
     param(
         [parameter(Mandatory)][int]$StartX, 
         [parameter(Mandatory)][int]$StartZ, 
+        [switch]$ShowStatistics = $false, 
         [int]$StartColumn = 128
     )
 
-    $TargetFile = "${HOME}\pwsh\image_and_csv\nazuna3_MC.csv"
+    $TargetFile = "${HOME}\pwsh\image_and_csv\nazuna2_MC.csv"
     "TargetFile:${TargetFile}" | Out-Host
 
     $TargetWidth = 128
@@ -14,6 +15,25 @@
     $CsvContent = Get-Content -Path $TargetFile -Encoding UTF8 | `
                     Select-Object -First ($TargetWidth + 1) | `
                         ConvertFrom-Csv -Delimiter ","
+
+    #使用するブロックの総数を表示
+    if($ShowStatistics){
+        $BlockStatistics = New-Object -TypeName System.Collections.ArrayList
+        for($i = 0; $i -lt $TargetWidth; $i++){
+            for($j = 1; $j -lt $TargetWidth + 1; $j++){
+                $ToAdd = $CsvContent."${j}"[$i] -replace "(\(明\)|\(標準\)|\(暗\))", ""
+                $BlockStatistics.Add($ToAdd) | Out-Null
+            }
+        }
+        $BlockStatistics | `
+            Group-Object -NoElement | `
+                Select-Object -Property @{
+                    name = "Count"
+                    expression = {"$($_.Count)".PadLeft(4, " ")}
+                }, Name | `
+                    Sort-Object -Property Count
+        exit
+    }
 
     #Columnを降順で走査
     for($j = $TargetWidth; $j -gt 0; $j--){
@@ -52,4 +72,4 @@
     }
 }
 
-Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128
+#Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128 -ShowStatistics
