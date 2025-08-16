@@ -31,7 +31,8 @@
                     name = "Count"
                     expression = {"$($_.Count)".PadLeft(4, " ")}
                 }, Name | `
-                    Sort-Object -Property Count
+                    Sort-Object -Property Count | `
+                        Format-Table -AutoSize
     }
 
     #Columnを降順で走査
@@ -81,4 +82,4 @@
     }
 }
 
-#Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128
+Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128 -ShowStatistics
