@@ -32,7 +32,6 @@
                     expression = {"$($_.Count)".PadLeft(4, " ")}
                 }, Name | `
                     Sort-Object -Property Count
-        exit
     }
 
     #Columnを降順で走査
@@ -44,6 +43,7 @@
             } | `
                 Group-Object -NoElement | `
                     Sort-Object -Property Count
+        "" | Out-Host
 
         #ブロックを置き始めるy座標を計算
         $MaxHeight = 0
@@ -63,6 +63,7 @@
             #(標準)なら$i - 1のブロックのy座標が+0、何もしない
         }
         "X:$($j - $TargetWidth + $StartX)`tStartY:$($StartY - $MinHeight)" | Out-Host
+        "" | Out-Host
         
         for($i = $TargetWidth - 1; $i -ge 0; $i--){
             #置くブロック名を表示
