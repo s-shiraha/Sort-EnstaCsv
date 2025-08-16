@@ -6,7 +6,7 @@
         [int]$StartColumn = 128
     )
 
-    $TargetFile = "${HOME}\pwsh\image_and_csv\nazuna2_MC.csv"
+    $TargetFile = "${HOME}\pwsh\image_and_csv\nazuna3_MC.csv"
     "TargetFile:${TargetFile}" | Out-Host
 
     $TargetWidth = 128
@@ -16,8 +16,8 @@
                     Select-Object -First ($TargetWidth + 1) | `
                         ConvertFrom-Csv -Delimiter ","
 
-    #使用するブロックの総数を表示
     if($ShowStatistics){
+        #使用するブロックの総数を表示
         $BlockStatistics = New-Object -TypeName System.Collections.ArrayList
         for($i = 0; $i -lt $TargetWidth; $i++){
             for($j = 1; $j -lt $TargetWidth + 1; $j++){
@@ -37,6 +37,14 @@
 
     #Columnを降順で走査
     for($j = $TargetWidth; $j -gt 0; $j--){
+        #該当列のブロック総数を表示
+        $CsvContent."${j}" | `
+            ForEach-Object -Process {
+                $_ -replace "(\(明\)|\(標準\)|\(暗\))", ""
+            } | `
+                Group-Object -NoElement | `
+                    Sort-Object -Property Count
+
         #ブロックを置き始めるy座標を計算
         $MaxHeight = 0
         $MinHeight = 0
@@ -72,4 +80,4 @@
     }
 }
 
-#Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128 -ShowStatistics
+Sort-EnstaCsv3 -StartX -193 -StartZ -65 -StartColumn 128
