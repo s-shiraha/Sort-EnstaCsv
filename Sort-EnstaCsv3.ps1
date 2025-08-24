@@ -46,7 +46,8 @@
                     Group-Object -NoElement | `
                         Sort-Object -Property Count
             "" | Out-Host
-
+            
+            <#
             #ブロックを置き始めるy座標を計算
             $MaxHeight = 0
             $MinHeight = 0
@@ -66,9 +67,25 @@
             }
             "X:$($j - $TargetWidth + $StartingX)`tStartY:$($StartY - $MinHeight)" | Out-Host
             "" | Out-Host
-            
+            #>
+            $Y_Delta = 0
+            $StartZ_tmp = $StartingZ
+            $Y_Info = New-Object -TypeName System.Collections.ArrayList
             for($i = $TargetWidth - 1; $i -ge 0; $i--){
-                #置くブロック名を表示
+                if($CsvContent."${j}"[$i] -match "(明)"){
+                    $Y_Delta--
+                }
+                if($CsvContent."${j}"[$i] -match "(暗)"){
+                    $Y_Info.Add("x:${StartX}`tz:${StartZ_tmp} ~ $($StartingZ  - $TargetWidth + $i)`ty_max:$($StartY - $Y_Delta)") | Out-Null
+                    $Y_Delta = -1
+                    $StartZ_tmp = $StartingZ - $TargetWidth + $i - 1
+                }
+            }
+            $Y_Info.Add("x:${StartX}`tz:${StartZ_tmp} ~ $($StartingZ  - $TargetWidth + $i)`ty_max:$($StartY - $Y_Delta)") | Out-Null
+            
+            $Y_InfoIndex = 0
+            #置くブロック名を表示
+            for($i = $TargetWidth - 1; $i -ge 0; $i--){
                 $Y_Delta = "Y_Delta = +0"
                 if($i -ne $TargetWidth - 1){
                     if($CsvContent."${j}"[$i + 1] -match "\(明\)$"){
@@ -78,10 +95,14 @@
                     }
                 }
                 "$($CsvContent."${j}"[$i])`tX:$($StartingX + $j - $TargetWidth)`tZ:$($StartingZ + $i - $TargetWidth)`t${Y_Delta}" | Out-Host
+                if($i -eq $TargetWidth - 1 -or $CsvContent."${j}"[$i] -match "(暗)"){
+                    $Y_Info[$Y_InfoIndex] | Out-Host
+                    $Y_InfoIndex++
+                }
                 Read-Host
             }
         }
     }
 }
 
-#Sort-EnstaCsv3 -StartingX -193 -StartingZ -65 -StartX -194
+Sort-EnstaCsv3 -StartingX -193 -StartingZ -65 -StartX -193
