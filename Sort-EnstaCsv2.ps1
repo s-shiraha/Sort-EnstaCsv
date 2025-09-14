@@ -6,7 +6,7 @@ function Sort-EnstaCsv2 {
         [parameter(mandatory = $true)][int]$StartRow
 
     )
-    $TargetFile = "${HOME}/pwsh/image_and_csv/niki2.csv"
+    $TargetFile = "${HOME}/pwsh/image_and_csv/nazuna3_MC.csv"
     "TargetFile`t${TargetFile}" | Out-Host
 
     $Content = Get-Content -Path $TargetFile -Encoding utf8
@@ -41,43 +41,33 @@ function Sort-EnstaCsv2 {
     
     for($i = $i_begin; $i -ne ($i_end + $i_delta); $i = $i + $i_delta){
         $TargetCount = 0
-        $OutStr = "Z:$($StartingZ + $i - $MaxRow)`n"
+        #$OutStr = "Z:$($StartingZ + $i - $MaxRow)`n"
         $CurrentLine = ($Content | Select-Object -Skip $i -First 1) -split ","
         for($j = $j_begin; $j -ne ($j_end + $j_delta); $j = $j + $j_delta){
             if($CurrentLine[$j] -eq $TargetBlock){
                 if($TargetCount -eq 0){
-                    $OutStr += "  from $(($StartingX + $j - $MaxColumn).ToString().PadLeft(4, " ")), count "
+                    $OutStr += "  from ($(($StartingX + $j - $MaxColumn).ToString().PadLeft(4, " ")),$(($StartingZ + $i - $MaxRow).ToString().PadLeft(4, " "))), count "
                 }
                 $TargetCount++
             } else {
                 if($TargetCount -gt 0){
-                    $OutStr += "$($TargetCount.ToString().PadLeft(4, " "))`n"
+                    $OutStr += "$($TargetCount.ToString().PadLeft(4, " "))"
+                    if($TargetCount -gt 1){$OutStr += "!!!!!"}
+                    $OutStr += "`n"
                     $TargetCount = 0
                 }
             }
-            <#
-            $CurrentLine = ($Content | Select-Object -Skip $i -First 1) -split ","
-            $CurrentBlock = $CurrentLine[$j]
-            if($CurrentBlock -eq $TargetBlock){
-                if($TargetCount -eq 0){
-                    $BeginX = $StartingX + $j - $MaxColumn
-                    $BeginZ = $StartingZ + $i - $MaxRow
-                }
-                $TargetCount++
-            } else {
-                if($TargetCount -gt 0){
-                    "${TargetBlock}`t${HDirection}`t(${BeginX},${BeginZ})`tcount=${TargetCount}"
-                    $TargetCount = 0
-                    Read-Host
-                }
-            }
-            #>
         }
         if($TargetCount -gt 0){
             $OutStr += "$($TargetCount.ToString().PadLeft(4, " "))`n"
         }
-        $OutStr | Out-Host
-        Read-Host
+        if(($OutStr -replace "\s", "").Length -gt 0){
+            $OutStr | Out-Host
+            Read-Host
+            
+            $OutStr = ""
+        }
+        
     }
     
 }
